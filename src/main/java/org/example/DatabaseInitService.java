@@ -6,8 +6,8 @@ public class DatabaseInitService {
 
             SQLFileReader sqlFileReader = new SQLFileReader();
 
-            String file = "C://Users//Denis//IdeaProjects//DataBase_test//src//main//resources//V1__init_db.sql";
-            String file2 = "C://Users//Denis//IdeaProjects//DataBase_test//src//main//resources//V2__populate_db.sql";
+            String file = "C://Users//Denis//IdeaProjects//DataBase_test//src//main//resources//db//migration//V1__init_db.sql";
+            String file2 = "C://Users//Denis//IdeaProjects//DataBase_test//src//main//resources//db//migration//V2__populate_db.sql";
 
             String createTable = sqlFileReader.readSQLFile(file);
             String createTable2 = sqlFileReader.readSQLFile(file2);

@@ -1,0 +1,135 @@
+package org.example;
+
+import org.flywaydb.core.Flyway;
+
+import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ClientService {
+    private static final Main INSTANCE = new Main();
+
+    private static Connection connector;
+
+    public long create(String name) {
+        String sql = "INSERT INTO CLIENT (name) VALUES (?)";
+
+        try (Connection connection = Database.getConnector();
+             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, name);
+
+            int rowsInserted = statement.executeUpdate();
+            if (rowsInserted == 0) {
+                throw new SQLException("Creating client failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getLong(1);
+                } else {
+                    throw new SQLException("Creating client failed, no ID obtained.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error creating client: " + e.getMessage(), e);
+        }
+    }
+
+    public String getById(long id) {
+        String sql = "SELECT name FROM client WHERE id = ?";
+
+        try (Connection connection = Database.getConnector();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, id);
+
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getString("name");
+            } else {
+                throw new IllegalArgumentException("Client not found");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error creating client: " + e.getMessage(), e);
+        }
+    }
+
+    public void setName(long id, String name) {
+        String sql = "UPDATE client SET name = ? WHERE id = ?";
+
+        try (Connection connection = Database.getConnector();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, name);
+            statement.setLong(2, id);
+
+            int rowsUpdate = statement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error creating client: " + e.getMessage(), e);
+        }
+    }
+
+    public List<org.example.Client> listAll() {
+        List<org.example.Client> clients = new ArrayList<>();
+        String sql = "SELECT id, name FROM client";
+
+        try (Connection connection = Database.getConnector();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                long id = resultSet.getLong("id");
+                String name = resultSet.getString("name");
+                org.example.Client client = new org.example.Client(id, name);
+                clients.add(client);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error creating client: " + e.getMessage(), e);
+        }
+
+        return clients;
+    }
+
+    private static void flywayMigration(String url, String username, String password) {
+        Flyway flyway = Flyway.configure().dataSource(url, username, password).load();
+        flyway.migrate();
+    }
+
+    class Client {
+        private long id;
+        private String name;
+
+        public Client(long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "Client{" +
+                    "id=" + id +
+                    ", name='" + name + '\'' +
+                    '}';
+        }
+    }
+}
+
+
