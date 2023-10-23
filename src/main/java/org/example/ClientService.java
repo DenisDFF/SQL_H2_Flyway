@@ -3,14 +3,10 @@ package org.example;
 import org.flywaydb.core.Flyway;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClientService {
-    private static final Main INSTANCE = new Main();
-
-    private static Connection connector;
 
     public long create(String name) {
         String sql = "INSERT INTO CLIENT (name) VALUES (?)";
