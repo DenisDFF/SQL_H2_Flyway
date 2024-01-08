@@ -25,6 +25,8 @@ public class Main {
                 e.printStackTrace();
             }
 
+            //у коментарях написано що міграції фейляться, але у мене вони повністю запускаються і корректно працюють не видаючи помилки.
+
             ClientService clientService = new ClientService();
 
            List<Client> client = clientService.listAll();
