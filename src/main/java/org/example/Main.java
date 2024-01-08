@@ -21,7 +21,6 @@ public class Main {
                 String username = "sa";
                 String password = "";
                 connector = DriverManager.getConnection(dbUrl, username, password);
-                flywayMigration(dbUrl, username, password);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -31,11 +30,5 @@ public class Main {
            List<Client> client = clientService.listAll();
         System.out.println(client);
 
-    }
-
-
-    private static void flywayMigration(String url, String username, String password) {
-        Flyway flyway = Flyway.configure().dataSource(url, username, password).load();
-        flyway.migrate();
     }
 }

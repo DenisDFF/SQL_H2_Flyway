@@ -87,12 +87,6 @@ public class ClientService {
 
         return clients;
     }
-
-    private static void flywayMigration(String url, String username, String password) {
-        Flyway flyway = Flyway.configure().dataSource(url, username, password).load();
-        flyway.migrate();
-    }
-
 }
 
 
